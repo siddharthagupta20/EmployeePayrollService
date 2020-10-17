@@ -20,7 +20,9 @@ public class EmployeePayrollService {
 		this.list = list;
 	}
 
-	public void readEmpPayrollData(Scanner sc) {
+	public void readEmpPayrollData(IOService ioService) {
+		if(ioService.equals(IOService.CONSOLE_IO)) {
+		Scanner sc=new Scanner(System.in);
 		System.out.println("Enter employee id: ");
 		int id = sc.nextInt();
 		sc.nextLine();
@@ -29,6 +31,9 @@ public class EmployeePayrollService {
 		System.out.println("Enter employee salary: ");
 		double sal = sc.nextDouble();
 		list.add(new EmployeePayrollData(id, name, sal));
+		}
+		else if(ioService.equals(IOService.FILE_IO))
+			new EmployeePayrollFileIOService().readData();
 	}
 
 	public void writeEmployeePayrollData(IOService ioService) {
