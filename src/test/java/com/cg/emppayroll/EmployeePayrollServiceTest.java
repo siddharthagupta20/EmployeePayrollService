@@ -26,4 +26,8 @@ public class EmployeePayrollServiceTest {
 		long entries = empPayrollService.countEntries(EmployeePayrollService.IOService.FILE_IO);
 		Assert.assertEquals(3, entries);
 	}
+	@Test 
+	public void readDataFromDB() {
+		
+	}
 }
