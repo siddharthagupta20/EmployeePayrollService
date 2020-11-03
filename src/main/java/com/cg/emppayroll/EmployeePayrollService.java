@@ -2,6 +2,7 @@ package com.cg.emppayroll;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -134,11 +135,88 @@ public class EmployeePayrollService {
 	public long countEntries(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOService().countEntries();
+		if(ioService.equals(IOService.DB_IO)){
+			return employeePayrollDBService.countEntries();
+		}
 		return 0;
 	}
 
 	public void printData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO))
 			new EmployeePayrollFileIOService().printData();
+	}
+	public void addEmployeesToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			System.out.println("Employee Being Added: " + employeePayrollData.getName());
+			this.addEmployeeToPayroll(employeePayrollData.getName(),employeePayrollData.getCompId(),employeePayrollData.getSal(),
+					employeePayrollData.getStartDate(), employeePayrollData.getGender(),employeePayrollData.getPhNo(),employeePayrollData.getAddress());
+			System.out.println("Employee Added: " + employeePayrollData.getName());
+		});
+		System.out.println(this.list);
+	}
+
+	public void addEmployeesToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				System.out.println("Employee Being Added: " + Thread.currentThread().getName());
+				this.addEmployeeToPayroll(employeePayrollData.getName(),employeePayrollData.getCompId(),employeePayrollData.getSal(),
+						employeePayrollData.getStartDate(), employeePayrollData.getGender(),employeePayrollData.getPhNo(),employeePayrollData.getAddress());
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+				System.out.println("Employee Added: " + Thread.currentThread().getName());
+			};
+			Thread thread = new Thread(task, employeePayrollData.getName());
+			thread.start();
+		});
+		while (employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	public void addEmployeesToERDBWithThreads(List<EmployeePayrollData> employeePayrollDataList) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				System.out.println("Employee Being Added: " + Thread.currentThread().getName());
+				this.addEmployeeToPayroll(employeePayrollData.getName(),employeePayrollData.getCompId(),employeePayrollData.getSal(),
+						employeePayrollData.getStartDate(), employeePayrollData.getGender(),employeePayrollData.getPhNo(),employeePayrollData.getAddress());
+				System.out.println("Employee Added: " + Thread.currentThread().getName());
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+			};
+			Thread thread = new Thread(task, employeePayrollData.getName());
+			thread.start();
+		});
+		while (employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	public void UpdateEmployeeDataInERDBWithThreads(List<EmployeePayrollData> employeePayrollDataList) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				System.out.println("Employee Being Updated: " + Thread.currentThread().getName());
+				this.updateEmployeeSalary(employeePayrollData.getName(), employeePayrollData.getSal());
+				System.out.println("Employee Updated: " + Thread.currentThread().getName());
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+			};
+			Thread thread = new Thread(task, employeePayrollData.getName());
+			thread.start();
+		});
+		while (employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 }

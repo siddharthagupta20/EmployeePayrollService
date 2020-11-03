@@ -96,6 +96,7 @@ public class EmployeePayrollDBService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(employeePayrollList);
 		return employeePayrollList;
 	}
 
@@ -271,7 +272,7 @@ public class EmployeePayrollDBService {
 					empId,salary, deductions, taxablePay, tax, netPay);
 			int rowsAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
 			if (rowsAffected == 1) {
-				employeePayrollData = new EmployeePayrollData(empId, name, salary, startDate);
+				employeePayrollData = new EmployeePayrollData(empId, name, gender,salary, startDate,compId,ph_no,add);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -296,7 +297,7 @@ public class EmployeePayrollDBService {
 				}
 			}
 		}
-		return null;
+		return employeePayrollData;
 	}
 
 	public EmployeePayrollData addEmployeeToPayrollERDiagram(String name,int compId, double salary, LocalDate startDate,
@@ -339,7 +340,7 @@ public class EmployeePayrollDBService {
 					empId,salary, deductions, taxablePay, tax, netPay);
 			int rowsAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
 			if (rowsAffected == 1) {
-				employeePayrollData = new EmployeePayrollData(empId, name, salary, startDate);
+				employeePayrollData = new EmployeePayrollData(empId, name, gender,salary, startDate,compId,ph_no,address);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -377,21 +378,6 @@ public class EmployeePayrollDBService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-//		int employeeId = 0;
-//		try (Statement statement = connection.createStatement()) {
-//			String sql = String.format("select * from employee where name = '%s';", name);
-//			ResultSet resultSet = statement.executeQuery(sql);
-//			if (resultSet.next()) {
-//				employeeId = resultSet.getInt(1);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			try {
-//				connection.rollback();
-//			} catch (SQLException e1) {
-//				e1.printStackTrace();
-//			}
-//		}
 		try (Statement statement = connection.createStatement()) {
 			String sql = String.format("update employee set status = 0 where name = %s;", name);
 		} catch (SQLException e) {
@@ -417,6 +403,11 @@ public class EmployeePayrollDBService {
 				}
 			}
 		}
+	}
+
+	public long countEntries() {
+		return this.readEmployeeData().stream().count();
+		
 	}
 
 	
