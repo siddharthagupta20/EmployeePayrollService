@@ -329,24 +329,6 @@ public class EmployeePayrollDBService {
 				e1.printStackTrace();
 			}
 		}
-//		int employeeId = 0;
-//		try (Statement statement = connection.createStatement()) {
-//			String sql = String.format("insert into employee (name,gender) values ('%s','%s');", name, gender);
-//			int rowsAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
-//			if (rowsAffected == 1) {
-//				ResultSet resultSet = statement.getGeneratedKeys();
-//				if (resultSet.next())
-//					employeeId = resultSet.getInt(1);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			try {
-//				connection.rollback();
-//				return employeePayrollData;
-//			} catch (SQLException e1) {
-//				e1.printStackTrace();
-//			}
-//		}
 		try (Statement statement = connection.createStatement()) {
 			double deductions = salary * 0.2;
 			double taxablePay = salary - deductions;
